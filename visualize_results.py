@@ -8,6 +8,10 @@ def analizar_resultados(archivo_csv):
         # cargamos los datos usando pandas para facilitar el manejo de tablas
         df = pd.read_csv(archivo_csv)
         
+        # si hay demasiados procesos solo mostramos los primeros 25 para que sea legible
+        if len(df) > 25:
+            df = df.head(25)
+        
         # configuramos el estilo visual de las graficas
         sns.set_theme(style="whitegrid")
         

@@ -10,7 +10,7 @@ def main():
     
     # fase 1: generacion de datos
     print("⚙️ Fase 1: Generando lote de procesos aleatorios...", end=" ", flush=True)
-    generate_input.generar_procesos_aleatorios('input.csv', 100)
+    generate_input.generar_procesos_aleatorios('input.csv', 25)
     print("[OK]")
 
     # fase 2: compilacion
