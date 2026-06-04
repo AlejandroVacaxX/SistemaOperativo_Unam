@@ -60,3 +60,42 @@ void deallocate_memory(memory_block* block) {
         block->pid = -1;
     }
 }
+
+// recorremos la lista sumando el tamaño de todos los bloques que estan marcados como libres
+int get_total_free_memory(memory_block* head) {
+    int total = 0;
+    memory_block* current = head;
+    while (current != NULL) {
+        if (current->free) {
+            total += current->size;
+        }
+        current = current->next;
+    }
+    return total;
+}
+
+// un hueco es un bloque libre; contamos cuantos de estos hay dispersos por la lista
+int count_memory_holes(memory_block* head) {
+    int holes = 0;
+    memory_block* current = head;
+    while (current != NULL) {
+        if (current->free) {
+            holes++;
+        }
+        current = current->next;
+    }
+    return holes;
+}
+
+// buscamos entre todos los bloques libres cual es el que tiene la mayor capacidad
+int get_largest_hole_size(memory_block* head) {
+    int max_size = 0;
+    memory_block* current = head;
+    while (current != NULL) {
+        if (current->free && current->size > max_size) {
+            max_size = current->size;
+        }
+        current = current->next;
+    }
+    return max_size;
+}
