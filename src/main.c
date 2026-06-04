@@ -7,6 +7,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+
+#define RED_COLOR "\033[31m"
+#define GREEN_COLOR "\033[32m"
+#define RESET_COLOR "\033[0m"
 
 #define MAX_PROCESSES 1000
 
@@ -26,12 +31,14 @@ int main(int argc, char* argv[]) {
         memory_block* ram = init_memory(500);
         printf("memoria inicializada con 500 unidades\n");
         print_memory_map(ram);
+        sleep(1);
 
         printf("\nasignando memoria para p1(100), p2(150) y p3(50)...\n");
         allocate_memory(ram, 1, 100, FIRST_FIT);
         allocate_memory(ram, 2, 150, FIRST_FIT);
         allocate_memory(ram, 3, 50, FIRST_FIT);
         print_memory_map(ram);
+        sleep(1);
         
         printf("\nliberando p2 y p3 para crear bloques libres contiguos...\n");
         memory_block* curr = ram;
@@ -42,10 +49,12 @@ int main(int argc, char* argv[]) {
             curr = curr->next;
         }
         print_memory_map(ram);
+        sleep(1);
         
         printf("\nejecutando coalescencia para unir bloques libres...\n");
         coalesce_memory(ram);
         print_memory_map(ram);
+        sleep(1);
         
         printf("\n--- fin de demostracion de memoria ---\n\n");
         

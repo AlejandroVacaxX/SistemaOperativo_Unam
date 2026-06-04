@@ -1,5 +1,6 @@
 #include "memory_manager.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 // creamos el primer bloque que representa toda la memoria disponible al inicio
 memory_block* init_memory(int total_size) {
@@ -273,9 +274,9 @@ void print_memory_map(memory_block* head) {
     printf("mapa de memoria: ");
     while (current != NULL) {
         if (current->free) {
-            printf("[%d libres]", current->size);
+            printf("\033[32m[%d libres]\033[0m", current->size);
         } else {
-            printf("[p%d:%d]", current->pid, current->size);
+            printf("\033[31m[p%d:%d]\033[0m", current->pid, current->size);
         }
         current = current->next;
     }
