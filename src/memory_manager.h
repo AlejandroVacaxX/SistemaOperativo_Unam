@@ -38,4 +38,10 @@ void find_all_holes_brute_force(memory_block* head, int size);
 // utiliza una estrategia de divide y venceras para procesar la lista
 void compact_memory_divide_and_conquer(memory_block** head);
 
+// crea una copia exacta de la lista de memoria actual para recuperacion posterior
+memory_block* clone_memory(memory_block* head);
+
+// libera toda la memoria ocupada por la lista de bloques
+void free_memory_list(memory_block* head);
+
 #endif // MEMORY_MANAGER_H

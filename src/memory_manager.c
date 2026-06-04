@@ -209,7 +209,6 @@ void compact_memory_divide_and_conquer(memory_block** head) {
             total_free += current->size;
             free(current);
         } else {
-            // desconectamos el bloque para moverlo a la lista de ocupados
             current->next = NULL;
             current->prev = occupied_tail;
             if (occupied_tail == NULL) {
@@ -222,7 +221,6 @@ void compact_memory_divide_and_conquer(memory_block** head) {
         current = next;
     }
     
-    // si habia memoria libre creamos un solo bloque al final
     if (total_free > 0) {
         memory_block* free_block = (memory_block*)malloc(sizeof(memory_block));
         if (free_block) {
@@ -231,7 +229,6 @@ void compact_memory_divide_and_conquer(memory_block** head) {
             free_block->pid = -1;
             free_block->next = NULL;
             free_block->prev = occupied_tail;
-            
             if (occupied_tail == NULL) {
                 occupied_list = free_block;
             } else {
@@ -242,4 +239,30 @@ void compact_memory_divide_and_conquer(memory_block** head) {
     
     *head = occupied_list;
     rebuild_offsets(*head);
+}
+
+// crea una copia identica de la lista de memoria para poder regresar a un estado previo si es necesario
+memory_block* clone_memory(memory_block* head) {
+    if (head == NULL) return NULL;
+    
+    memory_block* new_head = (memory_block*)malloc(sizeof(memory_block));
+    if (!new_head) return NULL;
+    
+    *new_head = *head;
+    new_head->next = clone_memory(head->next);
+    if (new_head->next != NULL) {
+        new_head->next->prev = new_head;
+    }
+    
+    return new_head;
+}
+
+// libera todos los nodos de la lista para evitar fugas de memoria durante el backtracking
+void free_memory_list(memory_block* head) {
+    memory_block* current = head;
+    while (current != NULL) {
+        memory_block* next = current->next;
+        free(current);
+        current = next;
+    }
 }
