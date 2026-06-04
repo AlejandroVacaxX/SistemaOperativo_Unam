@@ -1,7 +1,7 @@
 #ifndef PROCESS_H
 #define PROCESS_H
 
-// definicion de los estados posibles por los que pasa un proceso en nuestro simulador
+// creacion de structuras siguiendo el ejemplo del pdf
 typedef enum {
     READY,
     RUNNING,
