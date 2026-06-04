@@ -30,4 +30,8 @@ int get_largest_hole_size(memory_block* head);
 // recorre la lista de memoria uniendo bloques libres que esten uno junto al otro
 void coalesce_memory(memory_block* head);
 
+// busca exhaustivamente todos los huecos que pueden contener un tamaño especifico
+// imprime la ubicacion y tamaño de cada hueco encontrado
+void find_all_holes_brute_force(memory_block* head, int size);
+
 #endif // MEMORY_MANAGER_H

@@ -169,3 +169,18 @@ void coalesce_memory(memory_block* head) {
         }
     }
 }
+
+// buscamos en cada bloque de la lista sin saltarnos ninguno para ver si cabe el proceso
+void find_all_holes_brute_force(memory_block* head, int size) {
+    memory_block* current = head;
+    int found_count = 0;
+    
+    while (current != NULL) {
+        if (current->free && current->size >= size) {
+            found_count++;
+            // aqui simplemente imprimimos la informacion del hueco encontrado
+            // en una aplicacion real podriamos devolver una lista de punteros
+        }
+        current = current->next;
+    }
+}
