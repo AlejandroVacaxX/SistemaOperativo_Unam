@@ -266,3 +266,18 @@ void free_memory_list(memory_block* head) {
         current = next;
     }
 }
+
+// mostramos la ram de forma grafica para que sea facil de entender
+void print_memory_map(memory_block* head) {
+    memory_block* current = head;
+    printf("mapa de memoria: ");
+    while (current != NULL) {
+        if (current->free) {
+            printf("[%d libres]", current->size);
+        } else {
+            printf("[p%d:%d]", current->pid, current->size);
+        }
+        current = current->next;
+    }
+    printf("\n");
+}

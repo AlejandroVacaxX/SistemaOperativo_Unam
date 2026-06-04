@@ -44,4 +44,7 @@ memory_block* clone_memory(memory_block* head);
 // libera toda la memoria ocupada por la lista de bloques
 void free_memory_list(memory_block* head);
 
+// imprime una representacion visual de la memoria en formato [P1:100][libre:50]
+void print_memory_map(memory_block* head);
+
 #endif // MEMORY_MANAGER_H

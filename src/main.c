@@ -24,15 +24,15 @@ int main(int argc, char* argv[]) {
         printf("\n--- iniciando demostracion visual de gestion de memoria ---\n");
         memory_block* ram = init_memory(500);
         printf("memoria inicializada con 500 unidades\n");
+        print_memory_map(ram);
 
-        printf("asignando memoria para procesos de prueba...\n");
+        printf("\nasignando memoria para p1(100), p2(150) y p3(50)...\n");
         allocate_memory(ram, 1, 100, FIRST_FIT);
         allocate_memory(ram, 2, 150, FIRST_FIT);
         allocate_memory(ram, 3, 50, FIRST_FIT);
+        print_memory_map(ram);
         
-        printf("estado actual: %d huecos detectados\n", count_memory_holes(ram));
-        
-        printf("liberando proceso 2 para crear fragmentacion...\n");
+        printf("\nliberando p2 para crear fragmentacion...\n");
         memory_block* curr = ram;
         while(curr) {
             if(curr->pid == 2) {
@@ -41,15 +41,13 @@ int main(int argc, char* argv[]) {
             }
             curr = curr->next;
         }
+        print_memory_map(ram);
         
-        printf("fragmentacion: %d huecos, el mas grande es de %d unidades\n", 
-               count_memory_holes(ram), get_largest_hole_size(ram));
-        
-        printf("ejecutando coalecencia para unir bloques libres...\n");
+        printf("\nejecutando coalecencia para unir bloques libres...\n");
         coalesce_memory(ram);
-        printf("resultado: %d huecos detectados despues de unir bloques\n", count_memory_holes(ram));
+        print_memory_map(ram);
         
-        printf("--- fin de demostracion de memoria ---\n\n");
+        printf("\n--- fin de demostracion de memoria ---\n\n");
         
         // limpieza de memoria
         free_memory_list(ram);
