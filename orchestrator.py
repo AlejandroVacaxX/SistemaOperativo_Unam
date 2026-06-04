@@ -4,52 +4,45 @@ import os
 import generate_input
 import visualize_results
 
-# orquestador con interfaz de consola profesional para mejorar la experiencia de usuario
+# orquestador actualizado para mostrar la ejecucion detallada de round robin y memoria
 def main():
-    print("🚀 Iniciando Simulador de Sistema Operativo...")
+    print("🚀 iniciando demostracion detallada del sistema operativo...")
     
-    # fase 1: generacion de datos
-    print("⚙️ Fase 1: Generando lote de procesos aleatorios...", end=" ", flush=True)
-    generate_input.generar_procesos_aleatorios('input.csv', 25)
-    print("[OK]")
+    # fase 1: generacion de pocos procesos para legibilidad
+    print("⚙️ fase 1: generando lote de 5 procesos para la demostracion...", end=" ", flush=True)
+    generate_input.generar_procesos_aleatorios('input.csv', 5)
+    print("[ok]")
 
     # fase 2: compilacion
-    print("⚙️ Fase 2: Compilando motor de simulacion en C...", end=" ", flush=True)
+    print("⚙️ fase 2: compilando motor de simulacion en c...", end=" ", flush=True)
     fuentes = [
         "src/main.c", "src/fifo.c", "src/round_robin.c", "src/sjf.c",
         "src/queue.c", "src/circular_queue.c", "src/linked_list.c", 
-        "src/stack.c", "src/csv_parser.c", "src/csv_exporter.c"
+        "src/stack.c", "src/csv_parser.c", "src/csv_exporter.c", "src/memory_manager.c"
     ]
     comando_compilacion = ["gcc"] + fuentes + ["-o", "simulador"]
     try:
         subprocess.run(comando_compilacion, check=True)
-        print("[OK]")
+        print("[ok]")
     except subprocess.CalledProcessError:
-        print("[ERROR]")
+        print("[error]")
         return
 
-    # fase 3: ejecucion de algoritmos
-    print("⚙️ Fase 3: Ejecutando algoritmos de planificacion...")
-    algoritmos = [
-        ("fifo", "FIFO Scheduler"),
-        ("rr", "Round Robin (Q=2)"),
-        ("sjf", "Shortest Job First (SJF)")
-    ]
+    # fase 3: demostracion de memoria
+    print("⚙️ fase 3: demostracion de gestion de memoria (fragmentacion y coalecencia)")
+    subprocess.run(["./simulador", "demo_memoria"], check=True)
 
-    for cod, nombre in algoritmos:
-        print(f"   Corriendo {nombre}...", end=" ", flush=True)
-        inicio = time.time()
-        subprocess.run(["./simulador", cod, "input.csv"], check=True)
-        fin = time.time()
-        print(f"[Terminado en {fin - inicio:.3f}s]")
+    # fase 4: ejecucion detallada de round robin
+    print("⚙️ fase 4: ejecutando round robin con visualizacion de quantum...")
+    subprocess.run(["./simulador", "rr", "input.csv"], check=True)
 
-    # fase 4: analisis y graficacion
-    print("📊 Fase 4: Analizando resultados y generando graficas...", end=" ", flush=True)
+    # fase 5: analisis y graficacion
+    print("📊 fase 5: generando graficas de los 5 procesos...", end=" ", flush=True)
     visualize_results.analizar_resultados('output.csv')
-    print("[OK]")
+    print("[ok]")
 
-    print("\n✅ Simulacion completada con exito.")
-    print("📁 Las graficas de benchmarking han sido guardadas en la carpeta actual.")
+    print("\n✅ demostracion completada con exito.")
+    print("📁 puedes revisar 'grafica_rendimiento.png' para ver los resultados visuales.")
 
 if __name__ == "__main__":
     main()

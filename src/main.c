@@ -3,6 +3,7 @@
 #include "fifo.h"
 #include "round_robin.h"
 #include "sjf.h"
+#include "memory_manager.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -10,13 +11,50 @@
 
 // punto de entrada optimizado para ser llamado desde python sin interrupcion humana
 int main(int argc, char* argv[]) {
-    if (argc < 3) {
+    if (argc < 2) {
         return 1;
     }
 
     const char* algorithm = argv[1];
     const char* input_file = "input.csv";
     const char* output_file = "output.csv";
+
+    // si el algoritmo es "demo_memoria", ejecutamos una simulacion visual de la ram
+    if (strcmp(algorithm, "demo_memoria") == 0) {
+        printf("\n--- iniciando demostracion visual de gestion de memoria ---\n");
+        memory_block* ram = init_memory(500);
+        printf("memoria inicializada con 500 unidades\n");
+
+        printf("asignando memoria para procesos de prueba...\n");
+        allocate_memory(ram, 1, 100, FIRST_FIT);
+        allocate_memory(ram, 2, 150, FIRST_FIT);
+        allocate_memory(ram, 3, 50, FIRST_FIT);
+        
+        printf("estado actual: %d huecos detectados\n", count_memory_holes(ram));
+        
+        printf("liberando proceso 2 para crear fragmentacion...\n");
+        memory_block* curr = ram;
+        while(curr) {
+            if(curr->pid == 2) {
+                deallocate_memory(curr);
+                break;
+            }
+            curr = curr->next;
+        }
+        
+        printf("fragmentacion: %d huecos, el mas grande es de %d unidades\n", 
+               count_memory_holes(ram), get_largest_hole_size(ram));
+        
+        printf("ejecutando coalecencia para unir bloques libres...\n");
+        coalesce_memory(ram);
+        printf("resultado: %d huecos detectados despues de unir bloques\n", count_memory_holes(ram));
+        
+        printf("--- fin de demostracion de memoria ---\n\n");
+        
+        // limpieza de memoria
+        free_memory_list(ram);
+        return 0;
+    }
 
     process processes[MAX_PROCESSES];
     int count = load_processes_from_csv(input_file, processes, MAX_PROCESSES);
@@ -29,7 +67,6 @@ int main(int argc, char* argv[]) {
     stack history;
     init_stack(&history);
 
-    // seleccionamos el algoritmo segun el argumento recibido desde el orquestador
     if (strcmp(algorithm, "fifo") == 0) {
         queue q;
         init_queue(&q);
@@ -40,7 +77,7 @@ int main(int argc, char* argv[]) {
         circular_queue cq;
         init_cq(&cq);
         for (int i = 0; i < count; i++) enqueue_cq(&cq, processes[i]);
-        run_round_robin(&cq, &finished_list, &history, 2); // quantum por defecto
+        run_round_robin(&cq, &finished_list, &history, 2);
     }
     else if (strcmp(algorithm, "sjf") == 0) {
         run_sjf(processes, count, &finished_list, &history);
