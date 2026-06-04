@@ -5,6 +5,7 @@
 #include "sjf.h"
 #include "memory_manager.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define MAX_PROCESSES 1000
@@ -32,18 +33,17 @@ int main(int argc, char* argv[]) {
         allocate_memory(ram, 3, 50, FIRST_FIT);
         print_memory_map(ram);
         
-        printf("\nliberando p2 para crear fragmentacion...\n");
+        printf("\nliberando p2 y p3 para crear bloques libres contiguos...\n");
         memory_block* curr = ram;
         while(curr) {
-            if(curr->pid == 2) {
+            if(curr->pid == 2 || curr->pid == 3) {
                 deallocate_memory(curr);
-                break;
             }
             curr = curr->next;
         }
         print_memory_map(ram);
         
-        printf("\nejecutando coalecencia para unir bloques libres...\n");
+        printf("\nejecutando coalescencia para unir bloques libres...\n");
         coalesce_memory(ram);
         print_memory_map(ram);
         
