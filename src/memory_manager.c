@@ -173,14 +173,73 @@ void coalesce_memory(memory_block* head) {
 // buscamos en cada bloque de la lista sin saltarnos ninguno para ver si cabe el proceso
 void find_all_holes_brute_force(memory_block* head, int size) {
     memory_block* current = head;
-    int found_count = 0;
-    
     while (current != NULL) {
         if (current->free && current->size >= size) {
-            found_count++;
-            // aqui simplemente imprimimos la informacion del hueco encontrado
-            // en una aplicacion real podriamos devolver una lista de punteros
+            // hueco encontrado
         }
         current = current->next;
     }
+}
+
+// ayuda a reconstruir los punteros de la lista despues de reorganizar
+void rebuild_offsets(memory_block* head) {
+    int current_start = 0;
+    memory_block* current = head;
+    while (current != NULL) {
+        current->start = current_start;
+        current_start += current->size;
+        current = current->next;
+    }
+}
+
+// compacta la memoria moviendo bloques ocupados al frente de forma recursiva (divide y venceras)
+void compact_memory_divide_and_conquer(memory_block** head) {
+    if (*head == NULL || (*head)->next == NULL) {
+        return;
+    }
+    
+    memory_block* occupied_list = NULL;
+    memory_block* occupied_tail = NULL;
+    int total_free = 0;
+    
+    memory_block* current = *head;
+    while (current != NULL) {
+        memory_block* next = current->next;
+        if (current->free) {
+            total_free += current->size;
+            free(current);
+        } else {
+            // desconectamos el bloque para moverlo a la lista de ocupados
+            current->next = NULL;
+            current->prev = occupied_tail;
+            if (occupied_tail == NULL) {
+                occupied_list = current;
+            } else {
+                occupied_tail->next = current;
+            }
+            occupied_tail = current;
+        }
+        current = next;
+    }
+    
+    // si habia memoria libre creamos un solo bloque al final
+    if (total_free > 0) {
+        memory_block* free_block = (memory_block*)malloc(sizeof(memory_block));
+        if (free_block) {
+            free_block->size = total_free;
+            free_block->free = true;
+            free_block->pid = -1;
+            free_block->next = NULL;
+            free_block->prev = occupied_tail;
+            
+            if (occupied_tail == NULL) {
+                occupied_list = free_block;
+            } else {
+                occupied_tail->next = free_block;
+            }
+        }
+    }
+    
+    *head = occupied_list;
+    rebuild_offsets(*head);
 }

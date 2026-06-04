@@ -34,4 +34,8 @@ void coalesce_memory(memory_block* head);
 // imprime la ubicacion y tamaño de cada hueco encontrado
 void find_all_holes_brute_force(memory_block* head, int size);
 
+// reorganiza la memoria para mover todos los bloques libres al final
+// utiliza una estrategia de divide y venceras para procesar la lista
+void compact_memory_divide_and_conquer(memory_block** head);
+
 #endif // MEMORY_MANAGER_H
