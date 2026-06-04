@@ -16,41 +16,93 @@ memory_block* init_memory(int total_size) {
     return head;
 }
 
-// buscamos el primer bloque libre que tenga espacio suficiente para el proceso
-memory_block* allocate_memory(memory_block* head, int pid, int size) {
+// funcion auxiliar para dividir un bloque si es mas grande de lo necesario
+void split_block(memory_block* block, int size) {
+    if (block->size > size) {
+        memory_block* new_block = (memory_block*)malloc(sizeof(memory_block));
+        if (!new_block) return;
+        
+        new_block->start = block->start + size;
+        new_block->size = block->size - size;
+        new_block->free = true;
+        new_block->pid = -1;
+        new_block->next = block->next;
+        new_block->prev = block;
+        
+        if (block->next != NULL) {
+            block->next->prev = new_block;
+        }
+        
+        block->next = new_block;
+        block->size = size;
+    }
+}
+
+// buscamos el primer bloque libre que tenga espacio suficiente (estrategia rapida)
+memory_block* find_first_fit(memory_block* head, int size) {
     memory_block* current = head;
-    
     while (current != NULL) {
         if (current->free && current->size >= size) {
-            // si el bloque es mas grande de lo necesario lo dividimos
-            if (current->size > size) {
-                memory_block* new_block = (memory_block*)malloc(sizeof(memory_block));
-                if (!new_block) return NULL;
-                
-                new_block->start = current->start + size;
-                new_block->size = current->size - size;
-                new_block->free = true;
-                new_block->pid = -1;
-                new_block->next = current->next;
-                new_block->prev = current;
-                
-                if (current->next != NULL) {
-                    current->next->prev = new_block;
-                }
-                
-                current->next = new_block;
-                current->size = size;
-            }
-            
-            // ocupamos el bloque con la informacion del proceso
-            current->free = false;
-            current->pid = pid;
             return current;
         }
         current = current->next;
     }
+    return NULL;
+}
+
+// buscamos el bloque libre mas pequeño que sea suficiente (estrategia para reducir desperdicio)
+memory_block* find_best_fit(memory_block* head, int size) {
+    memory_block* current = head;
+    memory_block* best = NULL;
+    while (current != NULL) {
+        if (current->free && current->size >= size) {
+            if (best == NULL || current->size < best->size) {
+                best = current;
+            }
+        }
+        current = current->next;
+    }
+    return best;
+}
+
+// buscamos el bloque libre mas grande disponible (estrategia para dejar huecos grandes)
+memory_block* find_worst_fit(memory_block* head, int size) {
+    memory_block* current = head;
+    memory_block* worst = NULL;
+    while (current != NULL) {
+        if (current->free && current->size >= size) {
+            if (worst == NULL || current->size > worst->size) {
+                worst = current;
+            }
+        }
+        current = current->next;
+    }
+    return worst;
+}
+
+// funcion principal de asignacion que delega segun la estrategia elegida
+memory_block* allocate_memory(memory_block* head, int pid, int size, allocation_strategy strategy) {
+    memory_block* target = NULL;
     
-    return NULL; // no se encontro espacio suficiente
+    switch (strategy) {
+        case FIRST_FIT:
+            target = find_first_fit(head, size);
+            break;
+        case BEST_FIT:
+            target = find_best_fit(head, size);
+            break;
+        case WORST_FIT:
+            target = find_worst_fit(head, size);
+            break;
+    }
+    
+    if (target != NULL) {
+        split_block(target, size);
+        target->free = false;
+        target->pid = pid;
+    }
+    
+    return target;
 }
 
 // simplemente marcamos el bloque como libre para que pueda ser reusado
@@ -104,19 +156,14 @@ int get_largest_hole_size(memory_block* head) {
 void coalesce_memory(memory_block* head) {
     memory_block* current = head;
     while (current != NULL && current->next != NULL) {
-        // si el bloque actual y el siguiente estan libres los unimos
         if (current->free && current->next->free) {
             memory_block* next_block = current->next;
-            
             current->size += next_block->size;
             current->next = next_block->next;
-            
             if (next_block->next != NULL) {
                 next_block->next->prev = current;
             }
-            
             free(next_block);
-            // no avanzamos current para revisar si el nuevo bloque unido tiene otro libre a la derecha
         } else {
             current = current->next;
         }

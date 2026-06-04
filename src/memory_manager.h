@@ -3,12 +3,17 @@
 
 #include "memory_block.h"
 
+typedef enum {
+    FIRST_FIT,
+    BEST_FIT,
+    WORST_FIT
+} allocation_strategy;
+
 // inicializa la memoria principal con un unico bloque vacio del tamaño total
 memory_block* init_memory(int total_size);
 
-// intenta asignar un bloque de memoria para un proceso especifico
-// usa una estrategia basica de busqueda de primer hueco (first fit)
-memory_block* allocate_memory(memory_block* head, int pid, int size);
+// intenta asignar un bloque de memoria para un proceso especifico usando una estrategia
+memory_block* allocate_memory(memory_block* head, int pid, int size, allocation_strategy strategy);
 
 // libera un bloque de memoria asociado a un proceso
 void deallocate_memory(memory_block* block);
