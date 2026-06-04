@@ -22,4 +22,7 @@ int count_memory_holes(memory_block* head);
 // determina el tamaño del hueco mas grande disponible
 int get_largest_hole_size(memory_block* head);
 
+// recorre la lista de memoria uniendo bloques libres que esten uno junto al otro
+void coalesce_memory(memory_block* head);
+
 #endif // MEMORY_MANAGER_H

@@ -99,3 +99,26 @@ int get_largest_hole_size(memory_block* head) {
     }
     return max_size;
 }
+
+// buscamos parejas de bloques libres contiguos para unificarlos en uno solo
+void coalesce_memory(memory_block* head) {
+    memory_block* current = head;
+    while (current != NULL && current->next != NULL) {
+        // si el bloque actual y el siguiente estan libres los unimos
+        if (current->free && current->next->free) {
+            memory_block* next_block = current->next;
+            
+            current->size += next_block->size;
+            current->next = next_block->next;
+            
+            if (next_block->next != NULL) {
+                next_block->next->prev = current;
+            }
+            
+            free(next_block);
+            // no avanzamos current para revisar si el nuevo bloque unido tiene otro libre a la derecha
+        } else {
+            current = current->next;
+        }
+    }
+}
