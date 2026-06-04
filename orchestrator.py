@@ -19,7 +19,7 @@ def main():
     print("⚙️ fase 2: compilando motor de simulacion en c...", end=" ", flush=True)
     fuentes = [
         "src/main.c", "src/fifo.c", "src/round_robin.c", "src/sjf.c",
-        "src/queue.c", "src/circular_queue.c", "src/linked_list.c", 
+        "src/cola.c", "src/cola_circular.c", "src/linked_list.c", 
         "src/stack.c", "src/csv_parser.c", "src/csv_exporter.c", "src/memory_manager.c"
     ]
     comando_compilacion = ["gcc"] + fuentes + ["-o", "simulador"]

@@ -15,7 +15,7 @@
 
 #define MAX_PROCESSES 1000
 
-// punto de entrada optimizado para ser llamado desde python sin interrupcion humana
+// punto de entrada optimizado para ser llamado desde python 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
         return 1;
@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
     const char* input_file = "input.csv";
     const char* output_file = "output.csv";
 
-    // si el algoritmo es "demo_memoria", ejecutamos una simulacion visual de la ram
+    // ejecutamos una simulacion visual de la ram
     if (strcmp(algorithm, "demo_memoria") == 0) {
         printf("\n--- iniciando demostracion visual de gestion de memoria ---\n");
         memory_block* ram = init_memory(500);
@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
         print_memory_map(ram);
         sleep(1);
 
-        printf("\nasignando memoria para p1(100), p2(150) y p3(50)...\n");
+        printf("\nasignando memoria para p1[100], p2[150] y p3[50] \n");
         allocate_memory(ram, 1, 100, FIRST_FIT);
         allocate_memory(ram, 2, 150, FIRST_FIT);
         allocate_memory(ram, 3, 50, FIRST_FIT);
@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
         print_memory_map(ram);
         sleep(1);
         
-        printf("\nejecutando coalescencia para unir bloques libres...\n");
+        printf("\n ejecutando coalescencia para unir bloques libres...\n");
         coalesce_memory(ram);
         print_memory_map(ram);
         sleep(1);
@@ -75,15 +75,15 @@ int main(int argc, char* argv[]) {
     init_stack(&history);
 
     if (strcmp(algorithm, "fifo") == 0) {
-        queue q;
-        init_queue(&q);
-        for (int i = 0; i < count; i++) enqueue(&q, processes[i]);
+        cola q;
+        iniciar_cola(&q);
+        for (int i = 0; i < count; i++) encolar(&q, processes[i]);
         run_fifo(&q, &finished_list, &history);
     } 
     else if (strcmp(algorithm, "rr") == 0) {
-        circular_queue cq;
-        init_cq(&cq);
-        for (int i = 0; i < count; i++) enqueue_cq(&cq, processes[i]);
+        cola_circular cq;
+        iniciar_cc(&cq);
+        for (int i = 0; i < count; i++) encolar_cc(&cq, processes[i]);
         run_round_robin(&cq, &finished_list, &history, 2);
     }
     else if (strcmp(algorithm, "sjf") == 0) {

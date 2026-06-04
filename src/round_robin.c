@@ -9,11 +9,11 @@
 #define YELLOW "\033[33m"
 
 // el algoritmo round robin reparte el tiempo de cpu equitativamente usando un quantum
-void run_round_robin(circular_queue* ready_cq, linked_list* finished_list, stack* history, int quantum) {
+void run_round_robin(cola_circular* cc_listos, linked_list* finished_list, stack* history, int quantum) {
     printf("\n--- iniciando planificacion round robin (quantum: %d) ---\n", quantum);
     
-    while (!is_cq_empty(ready_cq)) {
-        process p = dequeue_cq(ready_cq);
+    while (!cc_vacia(cc_listos)) {
+        process p = desencolar_cc(cc_listos);
         
         printf(GREEN "ejecutando proceso %d" RESET ": tiempo restante %d\n", p.pid, p.remaining_time);
         sleep(1); // pausa para poder seguir la ejecucion visualmente
@@ -28,7 +28,7 @@ void run_round_robin(circular_queue* ready_cq, linked_list* finished_list, stack
             p.state = READY;
             printf(YELLOW "  ! quantum expirado" RESET ". proceso %d reencolado con %d restante\n", p.pid, p.remaining_time);
             push(history, p);
-            enqueue_cq(ready_cq, p);
+            encolar_cc(cc_listos, p);
         } else {
             // el proceso termina su trabajo dentro del quantum actual
             printf(RED "  * proceso %d termino su rafaga" RESET ". enviando a lista de finalizados\n", p.pid);

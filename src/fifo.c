@@ -2,9 +2,9 @@
 #include <stdio.h>
 
 // el algoritmo fifo procesa los procesos en el orden exacto en que llegaron a la cola
-void run_fifo(queue* ready_queue, linked_list* finished_list, stack* history) {
-    while (!is_queue_empty(ready_queue)) {
-        process p = dequeue(ready_queue);
+void run_fifo(cola* cola_listos, linked_list* finished_list, stack* history) {
+    while (!cola_vacia(cola_listos)) {
+        process p = desencolar(cola_listos);
         
         // cambiamos el estado a ejecutandose para iniciar la simulacion
         p.state = RUNNING;
