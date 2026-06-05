@@ -6,6 +6,6 @@
 #include "stack.h"
 
 // ejecuta el planificador fifo procesando todos los procesos en la cola de listos
-void run_fifo(cola* cola_listos, linked_list* finished_list, stack* history);
+void ejecutar_fifo(cola* cola_listos, lista_enlazada* lista_finalizada, pila* historial);
 
 #endif // FIFO_H

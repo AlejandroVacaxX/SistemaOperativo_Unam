@@ -3,282 +3,282 @@
 #include <stdio.h>
 
 // creamos el primer bloque que representa toda la memoria disponible al inicio
-memory_block* init_memory(int total_size) {
-    memory_block* head = (memory_block*)malloc(sizeof(memory_block));
-    if (!head) return NULL;
+bloque_memoria* inicializar_memoria(int tamano_total) {
+    bloque_memoria* cabeza = (bloque_memoria*)malloc(sizeof(bloque_memoria));
+    if (!cabeza) return NULL;
     
-    head->start = 0;
-    head->size = total_size;
-    head->free = true;
-    head->pid = -1;
-    head->next = NULL;
-    head->prev = NULL;
+    cabeza->inicio = 0;
+    cabeza->tamano = tamano_total;
+    cabeza->libre = true;
+    cabeza->pid = -1;
+    cabeza->siguiente = NULL;
+    cabeza->anterior = NULL;
     
-    return head;
+    return cabeza;
 }
 
 // funcion auxiliar para dividir un bloque si es mas grande de lo necesario
-void split_block(memory_block* block, int size) {
-    if (block->size > size) {
-        memory_block* new_block = (memory_block*)malloc(sizeof(memory_block));
-        if (!new_block) return;
+void dividir_bloque(bloque_memoria* bloque, int tamano) {
+    if (bloque->tamano > tamano) {
+        bloque_memoria* nuevo_bloque = (bloque_memoria*)malloc(sizeof(bloque_memoria));
+        if (!nuevo_bloque) return;
         
-        new_block->start = block->start + size;
-        new_block->size = block->size - size;
-        new_block->free = true;
-        new_block->pid = -1;
-        new_block->next = block->next;
-        new_block->prev = block;
+        nuevo_bloque->inicio = bloque->inicio + tamano;
+        nuevo_bloque->tamano = bloque->tamano - tamano;
+        nuevo_bloque->libre = true;
+        nuevo_bloque->pid = -1;
+        nuevo_bloque->siguiente = bloque->siguiente;
+        nuevo_bloque->anterior = bloque;
         
-        if (block->next != NULL) {
-            block->next->prev = new_block;
+        if (bloque->siguiente != NULL) {
+            bloque->siguiente->anterior = nuevo_bloque;
         }
         
-        block->next = new_block;
-        block->size = size;
+        bloque->siguiente = nuevo_bloque;
+        bloque->tamano = tamano;
     }
 }
 
 // buscamos el primer bloque libre que tenga espacio suficiente (estrategia rapida)
-memory_block* find_first_fit(memory_block* head, int size) {
-    memory_block* current = head;
-    while (current != NULL) {
-        if (current->free && current->size >= size) {
-            return current;
+bloque_memoria* buscar_primer_ajuste(bloque_memoria* cabeza, int tamano) {
+    bloque_memoria* actual = cabeza;
+    while (actual != NULL) {
+        if (actual->libre && actual->tamano >= tamano) {
+            return actual;
         }
-        current = current->next;
+        actual = actual->siguiente;
     }
     return NULL;
 }
 
 // buscamos el bloque libre mas pequeño que sea suficiente (estrategia para reducir desperdicio)
-memory_block* find_best_fit(memory_block* head, int size) {
-    memory_block* current = head;
-    memory_block* best = NULL;
-    while (current != NULL) {
-        if (current->free && current->size >= size) {
-            if (best == NULL || current->size < best->size) {
-                best = current;
+bloque_memoria* buscar_mejor_ajuste(bloque_memoria* cabeza, int tamano) {
+    bloque_memoria* actual = cabeza;
+    bloque_memoria* mejor = NULL;
+    while (actual != NULL) {
+        if (actual->libre && actual->tamano >= tamano) {
+            if (mejor == NULL || actual->tamano < mejor->tamano) {
+                mejor = actual;
             }
         }
-        current = current->next;
+        actual = actual->siguiente;
     }
-    return best;
+    return mejor;
 }
 
 // buscamos el bloque libre mas grande disponible (estrategia para dejar huecos grandes)
-memory_block* find_worst_fit(memory_block* head, int size) {
-    memory_block* current = head;
-    memory_block* worst = NULL;
-    while (current != NULL) {
-        if (current->free && current->size >= size) {
-            if (worst == NULL || current->size > worst->size) {
-                worst = current;
+bloque_memoria* buscar_peor_ajuste(bloque_memoria* cabeza, int tamano) {
+    bloque_memoria* actual = cabeza;
+    bloque_memoria* peor = NULL;
+    while (actual != NULL) {
+        if (actual->libre && actual->tamano >= tamano) {
+            if (peor == NULL || actual->tamano > peor->tamano) {
+                peor = actual;
             }
         }
-        current = current->next;
+        actual = actual->siguiente;
     }
-    return worst;
+    return peor;
 }
 
 // funcion principal de asignacion que delega segun la estrategia elegida
-memory_block* allocate_memory(memory_block* head, int pid, int size, allocation_strategy strategy) {
-    memory_block* target = NULL;
+bloque_memoria* asignar_memoria(bloque_memoria* cabeza, int pid, int tamano, estrategia_asignacion estrategia) {
+    bloque_memoria* objetivo = NULL;
     
-    switch (strategy) {
-        case FIRST_FIT:
-            target = find_first_fit(head, size);
+    switch (estrategia) {
+        case PRIMER_AJUSTE:
+            objetivo = buscar_primer_ajuste(cabeza, tamano);
             break;
-        case BEST_FIT:
-            target = find_best_fit(head, size);
+        case MEJOR_AJUSTE:
+            objetivo = buscar_mejor_ajuste(cabeza, tamano);
             break;
-        case WORST_FIT:
-            target = find_worst_fit(head, size);
+        case PEOR_AJUSTE:
+            objetivo = buscar_peor_ajuste(cabeza, tamano);
             break;
     }
     
-    if (target != NULL) {
-        split_block(target, size);
-        target->free = false;
-        target->pid = pid;
+    if (objetivo != NULL) {
+        dividir_bloque(objetivo, tamano);
+        objetivo->libre = false;
+        objetivo->pid = pid;
     }
     
-    return target;
+    return objetivo;
 }
 
 // simplemente marcamos el bloque como libre para que pueda ser reusado
-void deallocate_memory(memory_block* block) {
-    if (block != NULL) {
-        block->free = true;
-        block->pid = -1;
+void liberar_memoria(bloque_memoria* bloque) {
+    if (bloque != NULL) {
+        bloque->libre = true;
+        bloque->pid = -1;
     }
 }
 
 // recorremos la lista sumando el tamaño de todos los bloques que estan marcados como libres
-int get_total_free_memory(memory_block* head) {
+int obtener_memoria_libre_total(bloque_memoria* cabeza) {
     int total = 0;
-    memory_block* current = head;
-    while (current != NULL) {
-        if (current->free) {
-            total += current->size;
+    bloque_memoria* actual = cabeza;
+    while (actual != NULL) {
+        if (actual->libre) {
+            total += actual->tamano;
         }
-        current = current->next;
+        actual = actual->siguiente;
     }
     return total;
 }
 
 // un hueco es un bloque libre; contamos cuantos de estos hay dispersos por la lista
-int count_memory_holes(memory_block* head) {
-    int holes = 0;
-    memory_block* current = head;
-    while (current != NULL) {
-        if (current->free) {
-            holes++;
+int contar_huecos_memoria(bloque_memoria* cabeza) {
+    int huecos = 0;
+    bloque_memoria* actual = cabeza;
+    while (actual != NULL) {
+        if (actual->libre) {
+            huecos++;
         }
-        current = current->next;
+        actual = actual->siguiente;
     }
-    return holes;
+    return huecos;
 }
 
 // buscamos entre todos los bloques libres cual es el que tiene la mayor capacidad
-int get_largest_hole_size(memory_block* head) {
-    int max_size = 0;
-    memory_block* current = head;
-    while (current != NULL) {
-        if (current->free && current->size > max_size) {
-            max_size = current->size;
+int obtener_tamano_hueco_mas_grande(bloque_memoria* cabeza) {
+    int tamano_maximo = 0;
+    bloque_memoria* actual = cabeza;
+    while (actual != NULL) {
+        if (actual->libre && actual->tamano > tamano_maximo) {
+            tamano_maximo = actual->tamano;
         }
-        current = current->next;
+        actual = actual->siguiente;
     }
-    return max_size;
+    return tamano_maximo;
 }
 
 // buscamos parejas de bloques libres contiguos para unificarlos en uno solo
-void coalesce_memory(memory_block* head) {
-    memory_block* current = head;
-    while (current != NULL && current->next != NULL) {
-        if (current->free && current->next->free) {
-            memory_block* next_block = current->next;
-            current->size += next_block->size;
-            current->next = next_block->next;
-            if (next_block->next != NULL) {
-                next_block->next->prev = current;
+void unir_memoria(bloque_memoria* cabeza) {
+    bloque_memoria* actual = cabeza;
+    while (actual != NULL && actual->siguiente != NULL) {
+        if (actual->libre && actual->siguiente->libre) {
+            bloque_memoria* siguiente_bloque = actual->siguiente;
+            actual->tamano += siguiente_bloque->tamano;
+            actual->siguiente = siguiente_bloque->siguiente;
+            if (siguiente_bloque->siguiente != NULL) {
+                siguiente_bloque->siguiente->anterior = actual;
             }
-            free(next_block);
+            free(siguiente_bloque);
         } else {
-            current = current->next;
+            actual = actual->siguiente;
         }
     }
 }
 
 // buscamos en cada bloque de la lista sin saltarnos ninguno para ver si cabe el proceso
-void find_all_holes_brute_force(memory_block* head, int size) {
-    memory_block* current = head;
-    while (current != NULL) {
-        if (current->free && current->size >= size) {
+void buscar_todos_los_huecos_fuerza_bruta(bloque_memoria* cabeza, int tamano) {
+    bloque_memoria* actual = cabeza;
+    while (actual != NULL) {
+        if (actual->libre && actual->tamano >= tamano) {
             // hueco encontrado
         }
-        current = current->next;
+        actual = actual->siguiente;
     }
 }
 
 // ayuda a reconstruir los punteros de la lista despues de reorganizar
-void rebuild_offsets(memory_block* head) {
-    int current_start = 0;
-    memory_block* current = head;
-    while (current != NULL) {
-        current->start = current_start;
-        current_start += current->size;
-        current = current->next;
+void reconstruir_direcciones(bloque_memoria* cabeza) {
+    int inicio_actual = 0;
+    bloque_memoria* actual = cabeza;
+    while (actual != NULL) {
+        actual->inicio = inicio_actual;
+        inicio_actual += actual->tamano;
+        actual = actual->siguiente;
     }
 }
 
 // compacta la memoria moviendo bloques ocupados al frente de forma recursiva (divide y venceras)
-void compact_memory_divide_and_conquer(memory_block** head) {
-    if (*head == NULL || (*head)->next == NULL) {
+void compactar_memoria_divide_y_venceras(bloque_memoria** cabeza) {
+    if (*cabeza == NULL || (*cabeza)->siguiente == NULL) {
         return;
     }
     
-    memory_block* occupied_list = NULL;
-    memory_block* occupied_tail = NULL;
-    int total_free = 0;
+    bloque_memoria* lista_ocupados = NULL;
+    bloque_memoria* final_ocupados = NULL;
+    int total_libre = 0;
     
-    memory_block* current = *head;
-    while (current != NULL) {
-        memory_block* next = current->next;
-        if (current->free) {
-            total_free += current->size;
-            free(current);
+    bloque_memoria* actual = *cabeza;
+    while (actual != NULL) {
+        bloque_memoria* siguiente = actual->siguiente;
+        if (actual->libre) {
+            total_libre += actual->tamano;
+            free(actual);
         } else {
-            current->next = NULL;
-            current->prev = occupied_tail;
-            if (occupied_tail == NULL) {
-                occupied_list = current;
+            actual->siguiente = NULL;
+            actual->anterior = final_ocupados;
+            if (final_ocupados == NULL) {
+                lista_ocupados = actual;
             } else {
-                occupied_tail->next = current;
+                final_ocupados->siguiente = actual;
             }
-            occupied_tail = current;
+            final_ocupados = actual;
         }
-        current = next;
+        actual = siguiente;
     }
     
-    if (total_free > 0) {
-        memory_block* free_block = (memory_block*)malloc(sizeof(memory_block));
-        if (free_block) {
-            free_block->size = total_free;
-            free_block->free = true;
-            free_block->pid = -1;
-            free_block->next = NULL;
-            free_block->prev = occupied_tail;
-            if (occupied_tail == NULL) {
-                occupied_list = free_block;
+    if (total_libre > 0) {
+        bloque_memoria* bloque_libre = (bloque_memoria*)malloc(sizeof(bloque_memoria));
+        if (bloque_libre) {
+            bloque_libre->tamano = total_libre;
+            bloque_libre->libre = true;
+            bloque_libre->pid = -1;
+            bloque_libre->siguiente = NULL;
+            bloque_libre->anterior = final_ocupados;
+            if (final_ocupados == NULL) {
+                lista_ocupados = bloque_libre;
             } else {
-                occupied_tail->next = free_block;
+                final_ocupados->siguiente = bloque_libre;
             }
         }
     }
     
-    *head = occupied_list;
-    rebuild_offsets(*head);
+    *cabeza = lista_ocupados;
+    reconstruir_direcciones(*cabeza);
 }
 
 // crea una copia identica de la lista de memoria para poder regresar a un estado previo si es necesario
-memory_block* clone_memory(memory_block* head) {
-    if (head == NULL) return NULL;
+bloque_memoria* clonar_memoria(bloque_memoria* cabeza) {
+    if (cabeza == NULL) return NULL;
     
-    memory_block* new_head = (memory_block*)malloc(sizeof(memory_block));
-    if (!new_head) return NULL;
+    bloque_memoria* nueva_cabeza = (bloque_memoria*)malloc(sizeof(bloque_memoria));
+    if (!nueva_cabeza) return NULL;
     
-    *new_head = *head;
-    new_head->next = clone_memory(head->next);
-    if (new_head->next != NULL) {
-        new_head->next->prev = new_head;
+    *nueva_cabeza = *cabeza;
+    nueva_cabeza->siguiente = clonar_memoria(cabeza->siguiente);
+    if (nueva_cabeza->siguiente != NULL) {
+        nueva_cabeza->siguiente->anterior = nueva_cabeza;
     }
     
-    return new_head;
+    return nueva_cabeza;
 }
 
 // libera todos los nodos de la lista para evitar fugas de memoria durante el backtracking
-void free_memory_list(memory_block* head) {
-    memory_block* current = head;
-    while (current != NULL) {
-        memory_block* next = current->next;
-        free(current);
-        current = next;
+void liberar_lista_memoria(bloque_memoria* cabeza) {
+    bloque_memoria* actual = cabeza;
+    while (actual != NULL) {
+        bloque_memoria* siguiente = actual->siguiente;
+        free(actual);
+        actual = siguiente;
     }
 }
 
 // mostramos la ram de forma grafica para que sea facil de entender
-void print_memory_map(memory_block* head) {
-    memory_block* current = head;
+void imprimir_mapa_memoria(bloque_memoria* cabeza) {
+    bloque_memoria* actual = cabeza;
     printf("mapa de memoria: ");
-    while (current != NULL) {
-        if (current->free) {
-            printf("\033[32m[%d libres]\033[0m", current->size);
+    while (actual != NULL) {
+        if (actual->libre) {
+            printf("\033[32m[%d libres]\033[0m", actual->tamano);
         } else {
-            printf("\033[31m[p%d:%d]\033[0m", current->pid, current->size);
+            printf("\033[31m[p%d:%d]\033[0m", actual->pid, actual->tamano);
         }
-        current = current->next;
+        actual = actual->siguiente;
     }
     printf("\n");
 }

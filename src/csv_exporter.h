@@ -4,6 +4,6 @@
 #include "linked_list.h"
 
 // guarda los procesos finalizados y sus metricas en un archivo csv
-void export_results_to_csv(const char* filename, linked_list* finished_list);
+void exportar_dato_csv(const char* nombre_archivo, lista_enlazada* lista_finalizada);
 
 #endif // CSV_EXPORTER_H

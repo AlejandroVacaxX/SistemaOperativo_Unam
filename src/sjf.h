@@ -6,6 +6,6 @@
 #include "stack.h"
 
 // ejecuta el planificador shortest job first seleccionando el proceso mas corto
-void run_sjf(process processes[], int n, linked_list* finished_list, stack* history);
+void ejecutar_sjf(proceso procesos[], int n, lista_enlazada* lista_finalizada, pila* historial);
 
 #endif // SJF_H

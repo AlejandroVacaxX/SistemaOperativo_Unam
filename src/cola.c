@@ -4,7 +4,7 @@
 // inicializa la cola poniendola vacia
 void iniciar_cola(cola* c) {
     c->frente = NULL;
-    c->anterior = NULL;
+    c->final = NULL;
 }
 
 // verifica si la cola esta vacia
@@ -13,7 +13,7 @@ bool cola_vacia(cola* c) {
 }
 
 // encola un proceso al final de la cola
-void encolar(cola* c, process p) {
+void encolar(cola* c, proceso p) {
     nodo_cola* nuevo_nodo = (nodo_cola*)malloc(sizeof(nodo_cola));
     if (!nuevo_nodo) return; // fallo de asignacion de memoria
     
@@ -22,27 +22,27 @@ void encolar(cola* c, process p) {
     
     if (cola_vacia(c)) {
         c->frente = nuevo_nodo;
-        c->anterior = nuevo_nodo;
+        c->final = nuevo_nodo;
     } else {
-        c->anterior->siguiente = nuevo_nodo;
-        c->anterior = nuevo_nodo;
+        c->final->siguiente = nuevo_nodo;
+        c->final = nuevo_nodo;
     }
 }
 
 // desencola y retorna el proceso al frente de la cola
-process desencolar(cola* c) {
-    process p_vacio = {0};
+proceso desencolar(cola* c) {
+    proceso p_vacio = {0};
     if (cola_vacia(c)) {
         return p_vacio;
     }
     
     nodo_cola* temporal = c->frente;
-    process p = temporal->p;
+    proceso p = temporal->p;
     
     c->frente = c->frente->siguiente;
     
     if (c->frente == NULL) {
-        c->anterior = NULL;
+        c->final = NULL;
     }
     
     free(temporal);

@@ -21,76 +21,76 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    const char* algorithm = argv[1];
-    const char* input_file = "input.csv";
-    const char* output_file = "output.csv";
+    const char* algoritmo = argv[1];
+    const char* archivo_entrada = "input.csv";
+    const char* archivo_salida = "output.csv";
 
     // ejecutamos una simulacion visual de la ram
-    if (strcmp(algorithm, "demo_memoria") == 0) {
+    if (strcmp(algoritmo, "demo_memoria") == 0) {
         printf("\n--- iniciando demostracion visual de gestion de memoria ---\n");
-        memory_block* ram = init_memory(500);
+        bloque_memoria* memoria = inicializar_memoria(500);
         printf("memoria inicializada con 500 unidades\n");
-        print_memory_map(ram);
+        imprimir_mapa_memoria(memoria);
         //sleep(1);
 
         printf("\nasignando memoria para p1[100], p2[150] y p3[50] \n");
-        allocate_memory(ram, 1, 100, FIRST_FIT);
-        allocate_memory(ram, 2, 150, FIRST_FIT);
-        allocate_memory(ram, 3, 50, FIRST_FIT);
-        print_memory_map(ram);
+        asignar_memoria(memoria, 1, 100, PRIMER_AJUSTE);
+        asignar_memoria(memoria, 2, 150, PRIMER_AJUSTE);
+        asignar_memoria(memoria, 3, 50, PRIMER_AJUSTE);
+        imprimir_mapa_memoria(memoria);
         //sleep(1);
         
         printf("\n liberando p2 y p3 para crear bloques libres contiguos \n");
-        memory_block* curr = ram;
-        while(curr) {
-            if(curr->pid == 2 || curr->pid == 3) {
-                deallocate_memory(curr);
+        bloque_memoria* actual = memoria;
+        while(actual) {
+            if(actual->pid == 2 || actual->pid == 3) {
+                liberar_memoria(actual);
             }
-            curr = curr->next;
+            actual = actual->siguiente;
         }
-        print_memory_map(ram);
+        imprimir_mapa_memoria(memoria);
        //sleep(1);
         
         printf("\n ejecutando coalescencia para unir bloques libres \n");
-        coalesce_memory(ram);
-        print_memory_map(ram);
+        unir_memoria(memoria);
+        imprimir_mapa_memoria(memoria);
         //sleep(1);
         
         printf("\n--- fin de demostracion de memoria ---\n\n");
         
         // limpieza de memoria
-        free_memory_list(ram);
+        liberar_lista_memoria(memoria);
         return 0;
     }
 
-    process processes[MAX_PROCESSES];
-    int count = load_processes_from_csv(input_file, processes, MAX_PROCESSES);
+    proceso procesos[MAX_PROCESSES];
+    int cantidad = cargar_procesos_desde_csv(archivo_entrada, procesos, MAX_PROCESSES);
     
-    if (count == 0) return 1;
+    if (cantidad == 0) return 1;
 
-    linked_list finished_list;
-    init_list(&finished_list);
+    lista_enlazada lista_finalizada;
+    inicializar_lista(&lista_finalizada);
     
-    stack history;
-    init_stack(&history);
+    pila historial;
+    inicializar_pila(&historial);
 
-    if (strcmp(algorithm, "fifo") == 0) {
+    if (strcmp(algoritmo, "fifo") == 0) {
         cola q;
         iniciar_cola(&q);
-        for (int i = 0; i < count; i++) encolar(&q, processes[i]);
-        run_fifo(&q, &finished_list, &history);
+        for (int i = 0; i < cantidad; i++) encolar(&q, procesos[i]);
+        ejecutar_fifo(&q, &lista_finalizada, &historial);
     } 
-    else if (strcmp(algorithm, "rr") == 0) {
+    else if (strcmp(algoritmo, "rr") == 0) {
         cola_circular cq;
         iniciar_cc(&cq);
-        for (int i = 0; i < count; i++) encolar_cc(&cq, processes[i]);
-        run_round_robin(&cq, &finished_list, &history, 2);
+        for (int i = 0; i < cantidad; i++) encolar_cc(&cq, procesos[i]);
+        ejecutar_round_robin(&cq, &lista_finalizada, &historial, 2);
     }
-    else if (strcmp(algorithm, "sjf") == 0) {
-        run_sjf(processes, count, &finished_list, &history);
+    else if (strcmp(algoritmo, "sjf") == 0) {
+        ejecutar_sjf(procesos, cantidad, &lista_finalizada, &historial);
     }
 
-    export_results_to_csv(output_file, &finished_list);
+    exportar_dato_csv(archivo_salida, &lista_finalizada);
 
     return 0;
 }

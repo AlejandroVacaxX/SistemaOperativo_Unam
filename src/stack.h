@@ -8,23 +8,23 @@
 
 // estructura de pila para historial y backtracking
 typedef struct {
-    process items[MAX_STACK_SIZE];
-    int top;
-} stack;
+    proceso elementos[MAX_STACK_SIZE];
+    int tope;
+} pila;
 
 // inicializa la pila poniendola vacia
-void init_stack(stack* s);
+void inicializar_pila(pila* s);
 
 // verifica si la pila esta vacia
-bool is_stack_empty(stack* s);
+bool esta_pila_vacia(pila* s);
 
 // verifica si la pila alcanzo su limite
-bool is_stack_full(stack* s);
+bool esta_pila_llena(pila* s);
 
 // agrega un proceso a la pila
-bool push(stack* s, process p);
+bool apilar(pila* s, proceso p);
 
 // saca y retorna el proceso en el tope de la pila
-process pop(stack* s);
+proceso desapilar(pila* s);
 
 #endif // STACK_H

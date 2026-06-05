@@ -3,7 +3,7 @@
 // inicializa la cola circular poniendola vacia
 void iniciar_cc(cola_circular* cc) {
     cc->frente = 0;
-    cc->anterior = -1;
+    cc->final = -1;
     cc->contador = 0;
 }
 
@@ -18,23 +18,23 @@ bool cc_llena(cola_circular* cc) {
 }
 
 // encola un proceso en la cola circular
-bool encolar_cc(cola_circular* cc, process p) {
+bool encolar_cc(cola_circular* cc, proceso p) {
     if (cc_llena(cc)) {
         return false;
     }
     
-    cc->anterior = (cc->anterior + 1) % MAX_CC_TAMANO;
-    cc->items[cc->anterior] = p;
+    cc->final = (cc->final + 1) % MAX_CC_TAMANO;
+    cc->elementos[cc->final] = p;
     cc->contador++;
     
     return true;
 }
 
 // desencola y retorna el proceso al frente de la cola circular
-process desencolar_cc(cola_circular* cc) {
-    process p = {0}; // proceso vacio por defecto
+proceso desencolar_cc(cola_circular* cc) {
+    proceso p = {0}; // proceso vacio por defecto
     if (!cc_vacia(cc)) {
-        p = cc->items[cc->frente];
+        p = cc->elementos[cc->frente];
         cc->frente = (cc->frente + 1) % MAX_CC_TAMANO;
         cc->contador--;
     }

@@ -2,42 +2,42 @@
 #include <stdbool.h>
 
 // el algoritmo sjf aplica una estrategia codiciosa para elegir el proceso con menor tiempo de rafaga
-void run_sjf(process processes[], int n, linked_list* finished_list, stack* history) {
-    bool completed[n];
+void ejecutar_sjf(proceso procesos[], int n, lista_enlazada* lista_finalizada, pila* historial) {
+    bool completado[n];
     for (int i = 0; i < n; i++) {
-        completed[i] = false;
+        completado[i] = false;
     }
     
-    int completed_count = 0;
-    while (completed_count < n) {
-        int shortest_idx = -1;
-        int min_burst = 2147483647; // maximo valor entero para comparar
+    int contador_completados = 0;
+    while (contador_completados < n) {
+        int indice_mas_corto = -1;
+        int rafaga_minima = 2147483647; // maximo valor entero para comparar
         
         // buscamos el proceso que no ha terminado con la rafaga mas pequeña
         for (int i = 0; i < n; i++) {
-            if (!completed[i] && processes[i].burst_time < min_burst) {
-                min_burst = processes[i].burst_time;
-                shortest_idx = i;
+            if (!completado[i] && procesos[i].tiempo_rafaga < rafaga_minima) {
+                rafaga_minima = procesos[i].tiempo_rafaga;
+                indice_mas_corto = i;
             }
         }
         
-        if (shortest_idx != -1) {
-            process* p = &processes[shortest_idx];
+        if (indice_mas_corto != -1) {
+            proceso* p = &procesos[indice_mas_corto];
             
             // simulamos el cambio de estado a ejecucion
-            p->state = RUNNING;
-            push(history, *p);
+            p->estado = EJECUCION;
+            apilar(historial, *p);
             
             // en sjf no apropiativo el proceso corre hasta terminar
-            p->remaining_time = 0;
-            p->state = FINISHED;
+            p->tiempo_restante = 0;
+            p->estado = FINALIZADO;
             
             // registramos el final y lo pasamos a la lista de procesos terminados
-            push(history, *p);
-            insert_ordered_by_pid(finished_list, *p);
+            apilar(historial, *p);
+            insertar_ordenado_por_pid(lista_finalizada, *p);
             
-            completed[shortest_idx] = true;
-            completed_count++;
+            completado[indice_mas_corto] = true;
+            contador_completados++;
         }
     }
 }

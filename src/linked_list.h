@@ -5,23 +5,23 @@
 #include <stdbool.h>
 
 // nodo para la lista enlazada
-typedef struct list_node {
-    process p;
-    struct list_node* next;
-} list_node;
+typedef struct lista_nodos {
+    proceso p;
+    struct lista_nodos* siguiente;
+} lista_nodos;
 
 // estructura principal para almacenar los procesos finalizados
 typedef struct {
-    list_node* head;
-} linked_list;
+    lista_nodos* cabeza;
+} lista_enlazada;
 
 // inicializa la lista poniendola vacia
-void init_list(linked_list* list);
+void inicializar_lista(lista_enlazada* lista);
 
 // verifica si la lista esta vacia
-bool is_list_empty(linked_list* list);
+bool esta_lista_vacia(lista_enlazada* lista);
 
 // inserta un proceso en la lista manteniendo el orden por su pid
-void insert_ordered_by_pid(linked_list* list, process p);
+void insertar_ordenado_por_pid(lista_enlazada* lista, proceso p);
 
 #endif // LINKED_LIST_H

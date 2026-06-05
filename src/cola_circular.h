@@ -8,9 +8,9 @@
 
 // estructura de cola circular para el planificador round robin
 typedef struct {
-    process items[MAX_CC_TAMANO];
+    proceso elementos[MAX_CC_TAMANO];
     int frente;
-    int anterior;
+    int final;
     int contador;
 } cola_circular;
 
@@ -24,9 +24,9 @@ bool cc_vacia(cola_circular* cc);
 bool cc_llena(cola_circular* cc);
 
 // encola un proceso en la cola circular
-bool encolar_cc(cola_circular* cc, process p);
+bool encolar_cc(cola_circular* cc, proceso p);
 
 // desencola y retorna el proceso al frente de la cola circular
-process desencolar_cc(cola_circular* cc);
+proceso desencolar_cc(cola_circular* cc);
 
 #endif // COLA_CIRCULAR_H

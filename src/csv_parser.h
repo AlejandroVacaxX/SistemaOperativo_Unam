@@ -5,6 +5,6 @@
 
 // lee los procesos desde un archivo csv y los guarda en un arreglo
 // devuelve la cantidad de procesos leidos exitosamente
-int load_processes_from_csv(const char* filename, process processes[], int max_processes);
+int cargar_procesos_desde_csv(const char* nombre_archivo, proceso procesos[], int procesos_maximos);
 
 #endif // CSV_PARSER_H

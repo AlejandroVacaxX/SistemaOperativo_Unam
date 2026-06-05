@@ -19,6 +19,6 @@ def generar_procesos_aleatorios(nombre_archivo, cantidad):
             
             escritor.writerow([pid, burst_time, priority, memory_required])
 
-# ejecutamos la generacion de una tanda inicial de 10 procesos de prueba
+# ejecutamos la generacion de una tanda inicial de 10 procesos de prueba, en test
 if __name__ == "__main__":
     generar_procesos_aleatorios('input.csv', 10)

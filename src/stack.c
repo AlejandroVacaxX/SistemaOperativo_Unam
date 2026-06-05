@@ -1,34 +1,34 @@
 #include "stack.h"
 
 // inicializa la pila poniendola vacia
-void init_stack(stack* s) {
-    s->top = -1;
+void inicializar_pila(pila* s) {
+    s->tope = -1;
 }
 
 // verifica si la pila esta vacia
-bool is_stack_empty(stack* s) {
-    return s->top == -1;
+bool esta_pila_vacia(pila* s) {
+    return s->tope == -1;
 }
 
 // verifica si la pila alcanzo su limite
-bool is_stack_full(stack* s) {
-    return s->top == MAX_STACK_SIZE - 1;
+bool esta_pila_llena(pila* s) {
+    return s->tope == MAX_STACK_SIZE - 1;
 }
 
 // agrega un proceso a la pila si hay espacio
-bool push(stack* s, process p) {
-    if (is_stack_full(s)) {
+bool apilar(pila* s, proceso p) {
+    if (esta_pila_llena(s)) {
         return false;
     }
-    s->items[++(s->top)] = p;
+    s->elementos[++(s->tope)] = p;
     return true;
 }
 
 // saca y retorna el proceso en el tope de la pila
-process pop(stack* s) {
-    process p = {0}; // proceso vacio por defecto
-    if (!is_stack_empty(s)) {
-        p = s->items[(s->top)--];
+proceso desapilar(pila* s) {
+    proceso p = {0}; // proceso vacio por defecto
+    if (!esta_pila_vacia(s)) {
+        p = s->elementos[(s->tope)--];
     }
     return p;
 }
