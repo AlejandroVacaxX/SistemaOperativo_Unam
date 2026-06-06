@@ -64,3 +64,10 @@ Una vez compilado el ejecutable y con las dependencias de Python listas, puedes 
 python app.py
 ```
 *(Nota: Si utilizas otro script principal de Python para las simulaciones como `generate_input.py` o `visualize_results.py`, siéntete libre de ejecutarlos según sea necesario).*
+
+
+# *Nota importante
+
+todo el sistema en los archivos __app.py, main.c y round_robin.c__ tienen el uso de la funcion sleep(1), esto para que sea
+mas facil visualizar la informacion en la consola, cuando se muestre la informacion de los benchmarks,
+comenten todos los sleep(1), de esta forma el benchmark correra sin detenerse y se obtendran los numeros reales.

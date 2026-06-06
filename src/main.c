@@ -7,7 +7,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#define sleep(x) Sleep((x) * 1000)
+#else
 #include <unistd.h>
+#endif
 
 #define RED_COLOR "\033[31m"
 #define GREEN_COLOR "\033[32m"

@@ -1,12 +1,17 @@
 import subprocess
 import time
 import os
+import sys # para saber en que sistema estamos
 import generate_input
 import visualize_results
-from sistemaOperativoComandosFaltos import boot_os
+from sistemaOperativoComandos import boot_os
 
 
 def main():
+    # checamos si es windows o mac para no tener fallas al ejecutar
+    es_windows = sys.platform == "win32"
+    nombre_binario = "simulador.exe" if es_windows else "./simulador"
+    
     boot_os() # para que se vea cute
 
     
@@ -23,7 +28,11 @@ def main():
         "src/cola.c", "src/cola_circular.c", "src/linked_list.c", 
         "src/stack.c", "src/csv_parser.c", "src/csv_exporter.c", "src/memory_manager.c"
     ]
-    comando_compilacion = ["gcc"] + fuentes + ["-o", "simulador"]
+    
+    # en windows el output debe ser .exe
+    output_name = "simulador.exe" if es_windows else "simulador"
+    comando_compilacion = ["gcc"] + fuentes + ["-o", output_name]
+    
     try:
         subprocess.run(comando_compilacion, check=True)
         time.sleep(1)
@@ -35,7 +44,7 @@ def main():
     # demostracion de memoria
     print("\n demostracion de gestion de memoria")
     time.sleep(1)
-    subprocess.run(["./simulador", "demo_memoria"], check=True)
+    subprocess.run([nombre_binario, "demo_memoria"], check=True)
     time.sleep(2)
 
     # ejecucion de planificadores con medicion de rendimiento
@@ -53,7 +62,7 @@ def main():
     for cod, nombre in algoritmos:
         print(f"   corriendo {nombre}...", end=" ", flush=True)
         inicio = time.perf_counter() # alta precision
-        subprocess.run(["./simulador", cod, "input.csv"], check=True)
+        subprocess.run([nombre_binario, cod, "input.csv"], check=True)
         fin = time.perf_counter()
         duracion = fin - inicio
         print(f"[terminado en {duracion:.6f}s]")
