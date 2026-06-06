@@ -1,6 +1,12 @@
 #include "round_robin.h"
 #include <stdio.h>
-#include <unistd.h> // biblioteca para sleep en unix
+
+#ifdef _WIN32
+#include <windows.h>
+#define sleep(x) Sleep((x) * 1000)
+#else
+#include <unistd.h>
+#endif
 
 //codito ANSI para colores de consola
 #define RESET "\033[0m"
@@ -16,7 +22,7 @@ void ejecutar_round_robin(cola_circular* cc_listos, lista_enlazada* lista_finali
         Process p = desencolar_cc(cc_listos);
         
         printf(GREEN "Ejecutando proceso %d" RESET ": tiempo restante %d\n", p.pid, p.remaining_time);
-        sleep(1); 
+        //sleep(1); 
         
         // marcamos el proceso como en ejecucion
         p.state = RUNNING;
@@ -37,7 +43,7 @@ void ejecutar_round_robin(cola_circular* cc_listos, lista_enlazada* lista_finali
             apilar(historial, p);
             insertar_ordenado_por_pid(lista_finalizada, p);
         }
-        sleep(1); 
+        //sleep(1); 
     }
     printf("--- fin de round robin ---\n\n");
 }

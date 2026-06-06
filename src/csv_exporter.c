@@ -7,7 +7,7 @@ void exportar_dato_csv(const char* nombre_archivo, lista_enlazada* lista_finaliz
     if (!file) return;
 
     // encabezados para el archivo de resultados
-    fprintf(file, "pid,tiempo_rafaga,prioridad,memoria_requerida,estado\n");
+    fprintf(file, "pid,burst_time,priority,memory_required,state\n");
 
     lista_nodos* actual = lista_finalizada->cabeza;
     while (actual != NULL) {
@@ -16,11 +16,11 @@ void exportar_dato_csv(const char* nombre_archivo, lista_enlazada* lista_finaliz
         // convertimos el estado numerico a una etiqueta de texto legible
         char* estado_str;
         switch (p.state) {
-            case READY: estado_str = "listo"; break;
-            case RUNNING: estado_str = "ejecucion"; break;
-            case BLOCKED: estado_str = "bloqueado"; break;
-            case FINISHED: estado_str = "finalizado"; break;
-            default: estado_str = "desconocido"; break;
+            case READY: estado_str = "ready"; break;
+            case RUNNING: estado_str = "running"; break;
+            case BLOCKED: estado_str = "blocked"; break;
+            case FINISHED: estado_str = "finished"; break;
+            default: estado_str = "unknown"; break;
         }
 
         // escribimos los datos con el estado en formato de texto
