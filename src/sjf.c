@@ -2,7 +2,7 @@
 #include <stdbool.h>
 
 // el algoritmo sjf aplica una estrategia codiciosa para elegir el proceso con menor tiempo de rafaga
-void ejecutar_sjf(proceso procesos[], int n, lista_enlazada* lista_finalizada, pila* historial) {
+void ejecutar_sjf(Process procesos[], int n, lista_enlazada* lista_finalizada, pila* historial) {
     bool completado[n];
     for (int i = 0; i < n; i++) {
         completado[i] = false;
@@ -15,22 +15,22 @@ void ejecutar_sjf(proceso procesos[], int n, lista_enlazada* lista_finalizada, p
         
         // buscamos el proceso que no ha terminado con la rafaga mas pequeña
         for (int i = 0; i < n; i++) {
-            if (!completado[i] && procesos[i].tiempo_rafaga < rafaga_minima) {
-                rafaga_minima = procesos[i].tiempo_rafaga;
+            if (!completado[i] && procesos[i].burst_time < rafaga_minima) {
+                rafaga_minima = procesos[i].burst_time;
                 indice_mas_corto = i;
             }
         }
         
         if (indice_mas_corto != -1) {
-            proceso* p = &procesos[indice_mas_corto];
+            Process* p = &procesos[indice_mas_corto];
             
             // simulamos el cambio de estado a ejecucion
-            p->estado = EJECUCION;
+            p->state = RUNNING;
             apilar(historial, *p);
             
             // en sjf no apropiativo el proceso corre hasta terminar
-            p->tiempo_restante = 0;
-            p->estado = FINALIZADO;
+            p->remaining_time = 0;
+            p->state = FINISHED;
             
             // registramos el final y lo pasamos a la lista de procesos terminados
             apilar(historial, *p);

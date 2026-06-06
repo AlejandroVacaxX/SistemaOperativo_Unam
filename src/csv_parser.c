@@ -4,7 +4,7 @@
 #include <string.h>
 
 // abrimos el archivo y procesamos cada linea para extraer los atributos de los procesos
-int cargar_procesos_desde_csv(const char* nombre_archivo, proceso procesos[], int procesos_maximos) {
+int cargar_procesos_desde_csv(const char* nombre_archivo, Process procesos[], int procesos_maximos) {
     FILE* file = fopen(nombre_archivo, "r");
     if (!file) return 0;
 
@@ -24,17 +24,17 @@ int cargar_procesos_desde_csv(const char* nombre_archivo, proceso procesos[], in
 
         token = strtok(NULL, ",");
         if (token) {
-            procesos[count].tiempo_rafaga = atoi(token);
-            procesos[count].tiempo_restante = procesos[count].tiempo_rafaga;
+            procesos[count].burst_time = atoi(token);
+            procesos[count].remaining_time = procesos[count].burst_time;
         }
 
         token = strtok(NULL, ",");
-        if (token) procesos[count].prioridad = atoi(token);
+        if (token) procesos[count].priority = atoi(token);
 
         token = strtok(NULL, ",");
-        if (token) procesos[count].memoria_requerida = atoi(token);
+        if (token) procesos[count].memory_required = atoi(token);
 
-        procesos[count].estado = LISTO;
+        procesos[count].state = READY;
         count++;
     }
 

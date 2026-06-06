@@ -4,47 +4,48 @@
 #include "memory_block.h"
 
 typedef enum {
-    PRIMER_AJUSTE,
-    MEJOR_AJUSTE,
-    PEOR_AJUSTE
-} estrategia_asignacion;
+    FIRST_FIT,
+    BEST_FIT,
+    WORST_FIT
+} allocation_strategy;
+
 
 // inicializa la memoria principal con un unico bloque vacio del tamaño total
-bloque_memoria* inicializar_memoria(int tamano_total);
+MemoryBlock* inicializar_memoria(int tamano_total);
 
 // intenta asignar un bloque de memoria para un proceso especifico usando una estrategia
-bloque_memoria* asignar_memoria(bloque_memoria* cabeza, int pid, int tamano, estrategia_asignacion estrategia);
+MemoryBlock* asignar_memoria(MemoryBlock* cabeza, int pid, int tamano, allocation_strategy estrategia);
 
 // libera un bloque de memoria asociado a un proceso
-void liberar_memoria(bloque_memoria* bloque);
+void liberar_memoria(MemoryBlock* bloque);
 
 // calcula la cantidad total de memoria libre en el sistema
-int obtener_memoria_libre_total(bloque_memoria* cabeza);
+int obtener_memoria_libre_total(MemoryBlock* cabeza);
 
-// cuenta cuantos huecos (bloques libres separados) existen actualmente
-int contar_huecos_memoria(bloque_memoria* cabeza);
+// cuenta cuantos huecosexisten actualmente
+int contar_huecos_memoria(MemoryBlock* cabeza);
 
 // determina el tamaño del hueco mas grande disponible
-int obtener_tamano_hueco_mas_grande(bloque_memoria* cabeza);
+int obtener_tamano_hueco_mas_grande(MemoryBlock* cabeza);
 
 // recorre la lista de memoria uniendo bloques libres que esten uno junto al otro
-void unir_memoria(bloque_memoria* cabeza);
+void unir_memoria(MemoryBlock* cabeza);
 
 // busca exhaustivamente todos los huecos que pueden contener un tamaño especifico
 // imprime la ubicacion y tamaño de cada hueco encontrado
-void buscar_todos_los_huecos_fuerza_bruta(bloque_memoria* cabeza, int tamano);
+void buscar_todos_los_huecos_fuerza_bruta(MemoryBlock* cabeza, int tamano);
 
 // reorganiza la memoria para mover todos los bloques libres al final
 // utiliza una estrategia de divide y venceras para procesar la lista
-void compactar_memoria_divide_y_venceras(bloque_memoria** cabeza);
+void compactar_memoria_divide_y_venceras(MemoryBlock** cabeza);
 
 // crea una copia exacta de la lista de memoria actual para recuperacion posterior
-bloque_memoria* clonar_memoria(bloque_memoria* cabeza);
+MemoryBlock* clonar_memoria(MemoryBlock* cabeza);
 
-// libera toda la memoria ocupada por la lista de bloques
-void liberar_lista_memoria(bloque_memoria* cabeza);
+// libera toda la memoria 
+void liberar_lista_memoria(MemoryBlock* cabeza);
 
-// imprime una representacion visual de la memoria en formato [P1:100][libre:50]
-void imprimir_mapa_memoria(bloque_memoria* cabeza);
+
+void imprimir_mapa_memoria(MemoryBlock* cabeza);
 
 #endif // MEMORY_MANAGER_H

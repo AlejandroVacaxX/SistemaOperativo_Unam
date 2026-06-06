@@ -4,11 +4,11 @@
 #include "process.h"
 #include <stdbool.h>
 
-#define MAX_CC_TAMANO 100
+#define MAX_CC_TAMAÑO 100
 
 // estructura de cola circular para el planificador round robin
 typedef struct {
-    proceso elementos[MAX_CC_TAMANO];
+    Process elementos[MAX_CC_TAMAÑO];
     int frente;
     int final;
     int contador;
@@ -24,9 +24,9 @@ bool cc_vacia(cola_circular* cc);
 bool cc_llena(cola_circular* cc);
 
 // encola un proceso en la cola circular
-bool encolar_cc(cola_circular* cc, proceso p);
+bool encolar_cc(cola_circular* cc, Process p);
 
 // desencola y retorna el proceso al frente de la cola circular
-proceso desencolar_cc(cola_circular* cc);
+Process desencolar_cc(cola_circular* cc);
 
 #endif // COLA_CIRCULAR_H

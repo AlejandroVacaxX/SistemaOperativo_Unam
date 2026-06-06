@@ -4,13 +4,13 @@
 #include <stdbool.h>
 
 // definicion del bloque de memoria como un nodo de una lista doblemente enlazada
-typedef struct bloque_memoria {
-    int inicio;
-    int tamano;
-    bool libre;
+typedef struct MemoryBlock {
+    int start;
+    int size;
+    bool free;
     int pid;
-    struct bloque_memoria* siguiente;
-    struct bloque_memoria* anterior;
-} bloque_memoria;
+    struct MemoryBlock* siguiente;
+    struct MemoryBlock* anterior;
+} MemoryBlock;
 
-#endif // MEMORY_BLOCK_H
+#endif 

@@ -6,7 +6,7 @@
 
 // nodo individual para la cola dinamica
 typedef struct nodo_cola {
-    proceso p;
+    Process p;
     struct nodo_cola* siguiente;
 } nodo_cola;
 
@@ -23,9 +23,9 @@ void iniciar_cola(cola* c);
 bool cola_vacia(cola* c);
 
 // encola un proceso al final de la cola
-void encolar(cola* c, proceso p);
+void encolar(cola* c, Process p);
 
 // desencola y retorna el proceso al frente de la cola
-proceso desencolar(cola* c);
+Process desencolar(cola* c);
 
 #endif // COLA_H

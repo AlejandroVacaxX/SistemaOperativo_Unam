@@ -12,7 +12,7 @@ bool esta_lista_vacia(lista_enlazada* lista) {
 }
 
 // inserta un proceso en la lista manteniendo el orden por su pid
-void insertar_ordenado_por_pid(lista_enlazada* lista, proceso p) {
+void insertar_ordenado_por_pid(lista_enlazada* lista, Process p) {
     lista_nodos* nuevo_nodo = (lista_nodos*)malloc(sizeof(lista_nodos));
     if (!nuevo_nodo) return; // fallo de memoria
     

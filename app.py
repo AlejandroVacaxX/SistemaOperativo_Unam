@@ -7,14 +7,14 @@ from sistemaOperativoComandosFaltos import boot_os
 
 
 def main():
-    boot_os()
+    boot_os() # para que se vea cute
 
     
-    # generacion de pocos procesos para legibilidad
-    print("generando lote de procesos para la demostracion ", end=" ", flush=True)
-    generate_input.generar_procesos_aleatorios('input.csv', 50) # con esto podemos variar la cantidad de procesos
-   # time.sleep(1) # para benchmark comentamos los sleep, tambien en los codigos C
-    print("OK")
+    # generacion de procesos
+    print("generando lote de procesos", end=" ", flush=True) # con el flush la consola imprime en tiempo real
+    generate_input.generar_procesos_aleatorios('input.csv', 3) # con esto podemos variar la cantidad de procesos
+    time.sleep(1) 
+    print("[OK]")
 
     # compilacion, gracias a estas lineas de comando python manda a ejecutar todos nuestros codigos de C
     print("compilando motor de simulacion en C ", end=" ", flush=True)
@@ -26,17 +26,17 @@ def main():
     comando_compilacion = ["gcc"] + fuentes + ["-o", "simulador"]
     try:
         subprocess.run(comando_compilacion, check=True)
-        #time.sleep(1)
-        print("ok")
+        time.sleep(1)
+        print("[ok]")
     except subprocess.CalledProcessError:
         print("error")
         return
 
     # demostracion de memoria
     print("\n demostracion de gestion de memoria")
-    #time.sleep(1)
+    time.sleep(1)
     subprocess.run(["./simulador", "demo_memoria"], check=True)
-    #time.sleep(2)
+    time.sleep(2)
 
     # ejecucion de planificadores con medicion de rendimiento
     print("\n-------------------------------------------------")
@@ -44,7 +44,7 @@ def main():
     
     algoritmos = [
         ("fifo", "fifo scheduler"),
-        ("rr", "round robin (q=2)"),
+        ("rr", "round robin (q = 2)"),
         ("sjf", "shortest job first (sjf)")
     ]
     
@@ -70,8 +70,8 @@ def main():
     # analisis y graficacion
     print("generando graficas de los procesos", end=" ", flush=True)
     visualize_results.analizar_resultados('output.csv')
-   # time.sleep(1)
-    print("ok")
+    time.sleep(1)
+    print("[ok]")
 
     print("\ndemostracion completada con exito")
     print(" archivo 'grafica_rendimiento.png' generado.")

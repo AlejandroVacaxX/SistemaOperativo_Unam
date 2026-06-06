@@ -16,7 +16,7 @@ bool esta_pila_llena(pila* s) {
 }
 
 // agrega un proceso a la pila si hay espacio
-bool apilar(pila* s, proceso p) {
+bool apilar(pila* s, Process p) {
     if (esta_pila_llena(s)) {
         return false;
     }
@@ -25,8 +25,8 @@ bool apilar(pila* s, proceso p) {
 }
 
 // saca y retorna el proceso en el tope de la pila
-proceso desapilar(pila* s) {
-    proceso p = {0}; // proceso vacio por defecto
+Process desapilar(pila* s) {
+    Process p = {0}; // proceso vacio por defecto
     if (!esta_pila_vacia(s)) {
         p = s->elementos[(s->tope)--];
     }

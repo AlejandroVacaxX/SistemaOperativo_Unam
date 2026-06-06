@@ -28,20 +28,20 @@ int main(int argc, char* argv[]) {
     // ejecutamos una simulacion visual de la ram
     if (strcmp(algoritmo, "demo_memoria") == 0) {
         printf("\n--- iniciando demostracion visual de gestion de memoria ---\n");
-        bloque_memoria* memoria = inicializar_memoria(500);
+        MemoryBlock* memoria = inicializar_memoria(500);
         printf("memoria inicializada con 500 unidades\n");
         imprimir_mapa_memoria(memoria);
-        //sleep(1);
+        sleep(1);
 
         printf("\nasignando memoria para p1[100], p2[150] y p3[50] \n");
-        asignar_memoria(memoria, 1, 100, PRIMER_AJUSTE);
-        asignar_memoria(memoria, 2, 150, PRIMER_AJUSTE);
-        asignar_memoria(memoria, 3, 50, PRIMER_AJUSTE);
+        asignar_memoria(memoria, 1, 100, FIRST_FIT);
+        asignar_memoria(memoria, 2, 150, FIRST_FIT);
+        asignar_memoria(memoria, 3, 50, FIRST_FIT);
         imprimir_mapa_memoria(memoria);
-        //sleep(1);
+        sleep(1);
         
         printf("\n liberando p2 y p3 para crear bloques libres contiguos \n");
-        bloque_memoria* actual = memoria;
+        MemoryBlock* actual = memoria;
         while(actual) {
             if(actual->pid == 2 || actual->pid == 3) {
                 liberar_memoria(actual);
@@ -49,21 +49,21 @@ int main(int argc, char* argv[]) {
             actual = actual->siguiente;
         }
         imprimir_mapa_memoria(memoria);
-       //sleep(1);
+        sleep(1);
         
         printf("\n ejecutando coalescencia para unir bloques libres \n");
         unir_memoria(memoria);
         imprimir_mapa_memoria(memoria);
-        //sleep(1);
+        sleep(1);
         
         printf("\n--- fin de demostracion de memoria ---\n\n");
         
-        // limpieza de memoria
+        // free
         liberar_lista_memoria(memoria);
         return 0;
     }
 
-    proceso procesos[MAX_PROCESSES];
+    Process procesos[MAX_PROCESSES];
     int cantidad = cargar_procesos_desde_csv(archivo_entrada, procesos, MAX_PROCESSES);
     
     if (cantidad == 0) return 1;

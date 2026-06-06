@@ -3,20 +3,20 @@
 
 // creacion de structuras siguiendo el ejemplo del pdf
 typedef enum {
-    LISTO,
-    EJECUCION,
-    BLOQUEADO,
-    FINALIZADO
-} estado_proceso;
+    READY,
+    RUNNING,
+    BLOCKED,
+    FINISHED
+} ProcessState;
 
 // estructura principal que contiene la informacion de un proceso a ser planificado
 typedef struct {
     int pid;
-    int tiempo_rafaga;
-    int tiempo_restante;
-    int prioridad;
-    int memoria_requerida;
-    estado_proceso estado;
-} proceso;
+    int burst_time;
+    int remaining_time;
+    int priority;
+    int memory_required;
+    ProcessState state;
+} Process;
 
 #endif // PROCESS_H

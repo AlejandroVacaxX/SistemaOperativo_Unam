@@ -10,34 +10,34 @@
 
 // round robin
 void ejecutar_round_robin(cola_circular* cc_listos, lista_enlazada* lista_finalizada, pila* historial, int quantum) {
-    printf("\n--- iniciando planificacion round robin [quantum: %d] ---\n", quantum);
+    printf("\n--- Iniciando planificacion round robin [quantum: %d] ---\n", quantum);
     
     while (!cc_vacia(cc_listos)) {
-        proceso p = desencolar_cc(cc_listos);
+        Process p = desencolar_cc(cc_listos);
         
-        printf(GREEN "ejecutando proceso %d" RESET ": tiempo restante %d\n", p.pid, p.tiempo_restante);
-       // sleep(1); 
+        printf(GREEN "Ejecutando proceso %d" RESET ": tiempo restante %d\n", p.pid, p.remaining_time);
+        sleep(1); 
         
         // marcamos el proceso como en ejecucion
-        p.estado = EJECUCION;
+        p.state = RUNNING;
         apilar(historial, p);
         
-        if (p.tiempo_restante > quantum) {
+        if (p.remaining_time > quantum) {
             // el proceso todavia necesita tiempo, lo interrumpimos y regresa a la cola
-            p.tiempo_restante -= quantum;
-            p.estado = LISTO;
-            printf(YELLOW "  quantum expirado" RESET ". proceso %d reencolado con %d restante\n", p.pid, p.tiempo_restante);
+            p.remaining_time -= quantum;
+            p.state = READY;
+            printf(YELLOW "  Quantum expirado" RESET ". proceso %d reencolado con %d restante\n", p.pid, p.remaining_time);
             apilar(historial, p);
             encolar_cc(cc_listos, p);
         } else {
             // el proceso termina su trabajo dentro del quantum actual
             printf(RED "  * proceso %d termino su rafaga" RESET ". enviando a lista de finalizados\n", p.pid);
-            p.tiempo_restante = 0;
-            p.estado = FINALIZADO;
+            p.remaining_time = 0;
+            p.state = FINISHED;
             apilar(historial, p);
             insertar_ordenado_por_pid(lista_finalizada, p);
         }
-        //sleep(1); 
+        sleep(1); 
     }
     printf("--- fin de round robin ---\n\n");
 }

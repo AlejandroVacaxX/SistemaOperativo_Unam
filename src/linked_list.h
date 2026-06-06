@@ -6,7 +6,7 @@
 
 // nodo para la lista enlazada
 typedef struct lista_nodos {
-    proceso p;
+    Process p;
     struct lista_nodos* siguiente;
 } lista_nodos;
 
@@ -22,6 +22,6 @@ void inicializar_lista(lista_enlazada* lista);
 bool esta_lista_vacia(lista_enlazada* lista);
 
 // inserta un proceso en la lista manteniendo el orden por su pid
-void insertar_ordenado_por_pid(lista_enlazada* lista, proceso p);
+void insertar_ordenado_por_pid(lista_enlazada* lista, Process p);
 
 #endif // LINKED_LIST_H
