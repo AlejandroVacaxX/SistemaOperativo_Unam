@@ -37,14 +37,14 @@ int main(int argc, char* argv[]) {
         MemoryBlock* memoria = inicializar_memoria(500);
         printf("memoria inicializada con 500 unidades\n");
         imprimir_mapa_memoria(memoria);
-        sleep(1);
+        //sleep(1);
 
         printf("\nasignando memoria para p1[100], p2[150] y p3[50] \n");
         asignar_memoria(memoria, 1, 100, FIRST_FIT);
         asignar_memoria(memoria, 2, 150, FIRST_FIT);
         asignar_memoria(memoria, 3, 50, FIRST_FIT);
         imprimir_mapa_memoria(memoria);
-        sleep(1);
+        //sleep(1);
         
         printf("\n liberando p2 y p3 para crear bloques libres contiguos \n");
         MemoryBlock* actual = memoria;
@@ -55,16 +55,16 @@ int main(int argc, char* argv[]) {
             actual = actual->siguiente;
         }
         imprimir_mapa_memoria(memoria);
-        sleep(1);
+        //sleep(1);
         
         printf("\n ejecutando coalescencia para unir bloques libres \n");
         unir_memoria(memoria);
         imprimir_mapa_memoria(memoria);
-        sleep(1);
+        //sleep(1);
         
         printf("\n--- fin de demostracion de memoria ---\n\n");
         
-        // free
+        
         liberar_lista_memoria(memoria);
         return 0;
     }

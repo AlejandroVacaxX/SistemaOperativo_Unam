@@ -17,6 +17,7 @@ def analizar_resultados(archivo_csv):
         
         # creamos una grafica de barras para ver el tiempo de rafaga por cada proceso
         plt.figure(figsize=(10, 6))
+        # regresamos a burst_time para que coincida con el csv en ingles
         grafica = sns.barplot(x='pid', y='burst_time', data=df, hue='pid', palette='viridis', legend=False)
         plt.title('tiempo de rafaga por proceso (burst time)')
         plt.xlabel('id del proceso (pid)')
@@ -24,10 +25,11 @@ def analizar_resultados(archivo_csv):
         
         # guardamos la grafica en un archivo de imagen
         plt.savefig('grafica_rendimiento.png')
+        plt.close() # cerramos para no gastar memoria
         
     except Exception as e:
-        # si ocurre un error al leer o graficar lo ignoramos silenciosamente por ahora
-        pass
+        # si algo truena, mejor que nos diga que paso
+        print(f"noup, no se pudo generar la grafica: {e}")
 
 if __name__ == "__main__":
     analizar_resultados('output.csv')
